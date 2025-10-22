@@ -40,7 +40,9 @@ class AIState(rx.State):
         """Parses content for code blocks and updates the message state."""
         new_content_blocks = []
         last_end = 0
-        for match in re.finditer("([a-zA-Z0-9]*)\\n(.*?)\\n", full_content, re.DOTALL):
+        backtick = chr(96)
+        pattern = f"{backtick * 3}([a-zA-Z0-9]*)\\n(.*?)\\n{backtick * 3}"
+        for match in re.finditer(pattern, full_content, re.DOTALL):
             text_part = full_content[last_end : match.start()].strip()
             if text_part:
                 new_content_blocks.append(
