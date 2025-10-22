@@ -38,22 +38,31 @@ class AIState(rx.State):
 
     def _parse_and_update_content(self, full_content: str, ui_state: UIState):
         """Parses content for code blocks and updates the message state."""
-        parts = re.split("([\\w\\s]*\\n[\\s\\S]*?\\n)", full_content)
         new_content_blocks = []
-        for part in parts:
-            if not part:
-                continue
-            if match := re.match("([\\w\\s]*)\\n([\\s\\S]*?)\\n", part):
-                language = match.group(1).strip() or "plaintext"
-                code = match.group(2).strip()
+        last_end = 0
+        for match in re.finditer("([a-zA-Z0-9]*)\\n(.*?)\\n", full_content, re.DOTALL):
+            text_part = full_content[last_end : match.start()].strip()
+            if text_part:
                 new_content_blocks.append(
-                    {"type": "code", "content": code, "language": language}
+                    {"type": "text", "content": text_part, "language": None}
                 )
-            else:
-                new_content_blocks.append(
-                    {"type": "text", "content": part, "language": None}
-                )
-        ui_state.messages[-1]["content"] = new_content_blocks
+            language = match.group(1) or "plaintext"
+            code_part = match.group(2).strip()
+            new_content_blocks.append(
+                {"type": "code", "content": code_part, "language": language}
+            )
+            last_end = match.end()
+        remaining_text = full_content[last_end:].strip()
+        if remaining_text:
+            new_content_blocks.append(
+                {"type": "text", "content": remaining_text, "language": None}
+            )
+        if not new_content_blocks and full_content.strip():
+            new_content_blocks.append(
+                {"type": "text", "content": full_content.strip(), "language": None}
+            )
+        if new_content_blocks:
+            ui_state.messages[-1]["content"] = new_content_blocks
 
     async def _stream_openai(self, model: str, history: list[dict]):
         client = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
