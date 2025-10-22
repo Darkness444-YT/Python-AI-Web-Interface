@@ -37,8 +37,8 @@ class UIState(rx.State):
         {"name": "GPT-4o", "value": "gpt-4o", "provider": "OpenAI"},
         {"name": "GPT-3.5 Turbo", "value": "gpt-3.5-turbo", "provider": "OpenAI"},
         {
-            "name": "Llama 3.1 8B (Free)",
-            "value": "meta-llama/llama-3.1-8b-instruct:free",
+            "name": "Qwen3 235B A22B (Free)",
+            "value": "qwen/qwen3-235b-a22b:free",
             "provider": "OpenRouter",
         },
         {

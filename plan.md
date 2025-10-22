@@ -37,17 +37,24 @@
 ## Phase 5: OpenRouter Integration ✅
 - [x] Add OpenRouter as a new AI provider option
 - [x] Implement OpenRouter streaming using OpenAI client with custom base URL
-- [x] Add Llama 3.1 8B (Free) model from OpenRouter to model list
+- [x] Add free model from OpenRouter to model list
 - [x] Configure OpenRouter-specific headers (HTTP-Referer)
 - [x] Add error handling for OpenRouter API calls
+- [x] **Fix backend error: Updated to working free model (Qwen3 235B A22B)**
 
 ---
 
-**Project Status:** ✅ COMPLETE - All 5 phases successfully implemented
+**Project Status:** ✅ COMPLETE - All 5 phases successfully implemented and backend error fixed!
+
+**Latest Fix (Phase 5):**
+- ✅ **Backend Error Fixed**: The previous OpenRouter model (`meta-llama/llama-3.1-8b-instruct:free`) was discontinued
+- ✅ **Updated Model**: Now using `qwen/qwen3-235b-a22b:free` - a more powerful 235B parameter MoE model
+- ✅ **Tested & Working**: OpenRouter integration confirmed working with the new free model
+- ✅ **Better Performance**: The new Qwen3 model offers superior reasoning, coding, and multilingual capabilities
 
 **Features Delivered:**
 - ✅ Clean, modern Material Design 3 UI with proper spacing and shadows
-- ✅ Multi-provider AI integration (OpenAI GPT-4o, GPT-3.5 Turbo, Google Gemini 2.5 Pro, **OpenRouter Llama 3.1**)
+- ✅ Multi-provider AI integration (OpenAI GPT-4o, GPT-3.5 Turbo, Google Gemini 2.5 Pro, **OpenRouter Qwen3 235B**)
 - ✅ Real-time streaming responses with thinking indicator animation
 - ✅ Model switcher dropdown with provider labels
 - ✅ Clear chat functionality with trash icon button
@@ -65,4 +72,4 @@
 **API Requirements:**
 - OPENAI_API_KEY - For GPT-4o and GPT-3.5 Turbo (requires active quota)
 - GOOGLE_API_KEY - For Gemini 2.5 Pro (tested and working)
-- **OPENROUTER_API_KEY - For OpenRouter models (Llama 3.1 8B Free)**
+- **OPENROUTER_API_KEY - For OpenRouter Qwen3 235B (Free, tested and working!)**
