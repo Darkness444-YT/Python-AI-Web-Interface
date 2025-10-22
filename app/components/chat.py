@@ -106,33 +106,15 @@ def chat_header() -> rx.Component:
     """The header of the chat interface."""
     return rx.el.header(
         rx.el.div(
-            rx.el.div(
-                rx.icon("bot", class_name="h-6 w-6 text-blue-500"),
-                rx.el.h1(
-                    "AI Chat",
-                    class_name=rx.cond(
-                        UIState.theme == "light",
-                        "text-xl font-bold text-gray-800",
-                        "text-xl font-bold text-gray-100",
-                    ),
+            rx.el.h1(
+                "AI Chat",
+                class_name=rx.cond(
+                    UIState.theme == "light",
+                    "text-xl font-bold text-gray-800",
+                    "text-xl font-bold text-gray-100",
                 ),
-                class_name="flex items-center gap-3",
             ),
             rx.el.div(
-                rx.el.button(
-                    rx.cond(
-                        UIState.theme == "light",
-                        rx.icon("sun", class_name="h-4 w-4 text-gray-600"),
-                        rx.icon("moon", class_name="h-4 w-4 text-gray-200"),
-                    ),
-                    on_click=UIState.toggle_theme,
-                    class_name=rx.cond(
-                        UIState.theme == "light",
-                        "p-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors",
-                        "p-2 bg-gray-800 border border-gray-700 rounded-lg shadow-sm hover:bg-gray-700 transition-colors",
-                    ),
-                    aria_label="Toggle theme",
-                ),
                 rx.el.button(
                     rx.icon(
                         "trash-2",
@@ -219,8 +201,8 @@ def chat_header() -> rx.Component:
         ),
         class_name=rx.cond(
             UIState.theme == "light",
-            "w-full max-w-4xl mx-auto p-4 bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10 shadow-sm",
-            "w-full max-w-4xl mx-auto p-4 bg-gray-900/80 backdrop-blur-sm border-b border-gray-700 sticky top-0 z-10 shadow-sm",
+            "w-full max-w-4xl mx-auto flex items-center justify-between p-4 bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10 shadow-sm",
+            "w-full max-w-4xl mx-auto flex items-center justify-between p-4 bg-gray-900/80 backdrop-blur-sm border-b border-gray-700 sticky top-0 z-10 shadow-sm",
         ),
     )
 

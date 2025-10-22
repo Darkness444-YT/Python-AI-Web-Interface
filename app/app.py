@@ -1,44 +1,8 @@
 import reflex as rx
-from app.components.chat import chat_header, chat_messages, chat_input
-from app.state import UIState
-from app.states.ai_state import AIState
-
-
-def index() -> rx.Component:
-    """The main chat interface page."""
-    return rx.el.main(
-        rx.el.div(
-            chat_header(),
-            chat_messages(),
-            chat_input(),
-            class_name="flex flex-col h-screen",
-        ),
-        rx.window_event_listener(
-            on_key_down=lambda key: rx.cond(
-                key == "Escape",
-                rx.cond(
-                    UIState.show_model_selector,
-                    UIState.toggle_model_selector,
-                    rx.noop(),
-                ),
-                rx.noop(),
-            )
-        ),
-        rx.fragment(
-            rx.el.script("""
-                const endOfChat = document.getElementById('end-of-chat');
-                if (endOfChat) {
-                    endOfChat.scrollIntoView({ behavior: 'smooth' });
-                }
-                """)
-        ),
-        class_name=rx.cond(
-            UIState.theme == "light",
-            "font-['Inter'] bg-gray-50",
-            "font-['Inter'] bg-gray-900",
-        ),
-    )
-
+from app.pages.index import index
+from app.pages.chat import chat
+from app.pages.about import about
+from app.pages.settings import settings
 
 app = rx.App(
     theme=rx.theme(appearance="light", accent_color="blue"),
@@ -52,3 +16,6 @@ app = rx.App(
     ],
 )
 app.add_page(index)
+app.add_page(chat)
+app.add_page(about)
+app.add_page(settings)

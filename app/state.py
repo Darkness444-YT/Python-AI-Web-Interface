@@ -32,6 +32,7 @@ class UIState(rx.State):
     theme: str = rx.LocalStorage("light", name="theme")
     messages: list[Message] = []
     show_model_selector: bool = False
+    mobile_menu_open: bool = False
     is_loading: bool = False
     models: list[Model] = [
         {"name": "GPT-4o", "value": "gpt-4o", "provider": "OpenAI"},
@@ -49,6 +50,14 @@ class UIState(rx.State):
     ]
     selected_model: Model = models[3]
 
+    @rx.var
+    def current_page(self) -> str:
+        return self.router.page.path.strip("/") or "index"
+
+    @rx.event
+    def toggle_mobile_menu(self):
+        self.mobile_menu_open = not self.mobile_menu_open
+
     @rx.event
     def toggle_theme(self):
         """Toggles the color theme."""
@@ -64,6 +73,14 @@ class UIState(rx.State):
         """Selects an AI model and closes the dropdown."""
         self.selected_model = model
         self.show_model_selector = False
+
+    @rx.event
+    def select_model_by_value(self, value: str):
+        """Selects an AI model by its value."""
+        for model in self.models:
+            if model["value"] == value:
+                self.selected_model = model
+                break
 
     @rx.event
     def clear_chat(self):
