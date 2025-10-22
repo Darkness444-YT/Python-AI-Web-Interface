@@ -23,9 +23,20 @@
 - [x] Improve accessibility with ARIA labels and focus management
 - [x] Add smooth scroll to latest message
 
+## Phase 4: Code Block Support with Copy Feature ✅
+- [x] Install reflex-monaco for syntax highlighting
+- [x] Parse AI responses to detect code blocks (```language\ncode\n``` format)
+- [x] Create code_block component with Monaco editor
+- [x] Add syntax highlighting for multiple languages (Python, JavaScript, etc.)
+- [x] Implement copy button for each code block with clipboard integration
+- [x] Add toast notification when code is copied
+- [x] Style code blocks with proper headers showing language labels
+- [x] Support both light and dark themes for code editor
+- [x] Auto-size code blocks based on content length with line numbers
+
 ---
 
-**Project Status:** ✅ COMPLETE - All 3 phases successfully implemented
+**Project Status:** ✅ COMPLETE - All 4 phases successfully implemented
 
 **Features Delivered:**
 - ✅ Clean, modern Material Design 3 UI with proper spacing and shadows
@@ -33,6 +44,11 @@
 - ✅ Real-time streaming responses with thinking indicator animation
 - ✅ Model switcher dropdown with provider labels
 - ✅ Clear chat functionality with trash icon button
+- ✅ **Code block rendering with Monaco editor syntax highlighting**
+- ✅ **Copy-to-clipboard functionality for code snippets**
+- ✅ **Language-specific syntax highlighting (Python, JavaScript, etc.)**
+- ✅ **Dark and light theme support for code blocks**
+- ✅ **Line numbers and proper code formatting**
 - ✅ Keyboard shortcuts (Enter to send, Esc to close dropdown)
 - ✅ Proper error handling and user feedback
 - ✅ Smooth auto-scroll to latest messages

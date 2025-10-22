@@ -1,12 +1,21 @@
 import reflex as rx
-from typing import TypedDict, Literal
+from typing import TypedDict, Literal, Union
+import re
+
+
+class ContentBlock(TypedDict):
+    """A block of content, either text or code."""
+
+    type: Literal["text", "code"]
+    content: str
+    language: str | None
 
 
 class Message(TypedDict):
     """A chat message."""
 
     role: Literal["user", "assistant"]
-    content: str
+    content: list[ContentBlock]
 
 
 class Model(TypedDict):
@@ -65,7 +74,12 @@ class UIState(rx.State):
         prompt = form_data.get("prompt", "").strip()
         if not prompt:
             return
-        self.messages.append({"role": "user", "content": prompt})
+        user_message_block: ContentBlock = {
+            "type": "text",
+            "content": prompt,
+            "language": None,
+        }
+        self.messages.append({"role": "user", "content": [user_message_block]})
         self.is_loading = True
         yield
         yield AIState.get_response

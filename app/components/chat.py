@@ -1,5 +1,6 @@
 import reflex as rx
-from app.state import UIState, Message
+from reflex_monaco import monaco
+from app.state import UIState, Message, ContentBlock
 
 
 def user_message(message: Message) -> rx.Component:
@@ -7,7 +8,7 @@ def user_message(message: Message) -> rx.Component:
     return rx.el.div(
         rx.el.div(
             rx.el.p(
-                message["content"],
+                message["content"][0]["content"],
                 class_name=rx.cond(
                     UIState.theme == "light",
                     "text-base font-medium text-gray-800",
@@ -24,12 +25,78 @@ def user_message(message: Message) -> rx.Component:
     )
 
 
-def ai_message(message: Message) -> rx.Component:
-    """A message from the AI assistant."""
+def code_block(block: ContentBlock) -> rx.Component:
+    """A component to render a code block with syntax highlighting and a copy button."""
     return rx.el.div(
         rx.el.div(
-            rx.el.p(message["content"], class_name="text-base font-medium text-white"),
-            class_name="bg-blue-500 p-4 rounded-xl rounded-bl-none shadow-sm",
+            rx.el.span(
+                block["language"], class_name="text-xs font-medium text-gray-500"
+            ),
+            rx.el.button(
+                rx.icon("copy", class_name="h-4 w-4"),
+                on_click=[
+                    rx.set_clipboard(block["content"]),
+                    rx.toast.info("Code copied to clipboard!"),
+                ],
+                class_name=rx.cond(
+                    UIState.theme == "light",
+                    "p-1 text-gray-600 hover:bg-gray-200 rounded-md transition-colors",
+                    "p-1 text-gray-300 hover:bg-gray-600 rounded-md transition-colors",
+                ),
+                aria_label="Copy code",
+            ),
+            class_name=rx.cond(
+                UIState.theme == "light",
+                "flex justify-between items-center px-4 py-2 bg-gray-100 border-b border-gray-200 rounded-t-lg",
+                "flex justify-between items-center px-4 py-2 bg-gray-900 border-b border-gray-700 rounded-t-lg",
+            ),
+        ),
+        monaco(
+            value=block["content"],
+            language=block["language"],
+            height=f"""{
+                block["content"]
+                .split('''
+''')
+                .length()
+                * 20
+            }px""",
+            theme=rx.cond(UIState.theme == "light", "light", "vs-dark"),
+            options={
+                "readOnly": True,
+                "minimap": {"enabled": False},
+                "scrollBeyondLastLine": False,
+                "automaticLayout": True,
+                "wordWrap": "on",
+                "lineNumbers": "off",
+            },
+            class_name="!rounded-b-lg overflow-hidden",
+            custom_attrs={"minHeight": "60px"},
+        ),
+        class_name=rx.cond(
+            UIState.theme == "light",
+            "w-full border border-gray-200 rounded-lg shadow-sm",
+            "w-full border border-gray-700 rounded-lg shadow-sm",
+        ),
+    )
+
+
+def ai_message(message: Message) -> rx.Component:
+    """A message from the AI assistant, which can contain text and code blocks."""
+    return rx.el.div(
+        rx.el.div(
+            rx.foreach(
+                message["content"],
+                lambda block: rx.cond(
+                    block["type"] == "code",
+                    code_block(block),
+                    rx.el.p(
+                        block["content"],
+                        class_name="text-base font-medium text-white whitespace-pre-wrap",
+                    ),
+                ),
+            ),
+            class_name="flex flex-col gap-4 bg-blue-500 p-4 rounded-xl rounded-bl-none shadow-sm",
         ),
         class_name="flex justify-start w-full",
     )

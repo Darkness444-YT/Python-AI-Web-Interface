@@ -4,6 +4,7 @@ from openai import AsyncOpenAI
 import google.generativeai as genai
 from app.state import UIState
 import logging
+import re
 
 
 class AIState(rx.State):
@@ -18,9 +19,16 @@ class AIState(rx.State):
                 return
             provider = ui_state.selected_model["provider"]
             model = ui_state.selected_model["value"]
-            history = [
-                {"role": m["role"], "content": m["content"]} for m in ui_state.messages
-            ]
+            history = []
+            for m in ui_state.messages:
+                content = " ".join(
+                    [
+                        block["content"]
+                        for block in m["content"]
+                        if block["type"] == "text"
+                    ]
+                )
+                history.append({"role": m["role"], "content": content})
         if provider == "OpenAI":
             async for _ in self._stream_openai(model, history):
                 yield
@@ -28,28 +36,55 @@ class AIState(rx.State):
             async for _ in self._stream_google(model, history):
                 yield
 
+    def _parse_and_update_content(self, full_content: str, ui_state: UIState):
+        """Parses content for code blocks and updates the message state."""
+        parts = re.split("([\\w\\s]*\\n[\\s\\S]*?\\n)", full_content)
+        new_content_blocks = []
+        for part in parts:
+            if not part:
+                continue
+            if match := re.match("([\\w\\s]*)\\n([\\s\\S]*?)\\n", part):
+                language = match.group(1).strip() or "plaintext"
+                code = match.group(2).strip()
+                new_content_blocks.append(
+                    {"type": "code", "content": code, "language": language}
+                )
+            else:
+                new_content_blocks.append(
+                    {"type": "text", "content": part, "language": None}
+                )
+        ui_state.messages[-1]["content"] = new_content_blocks
+
     async def _stream_openai(self, model: str, history: list[dict]):
         client = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+        full_response = ""
         async with self:
             ui_state = await self.get_state(UIState)
-            ui_state.messages.append({"role": "assistant", "content": ""})
+            ui_state.messages.append(
+                {
+                    "role": "assistant",
+                    "content": [{"type": "text", "content": "", "language": None}],
+                }
+            )
         try:
             stream = await client.chat.completions.create(
                 model=model, messages=history, stream=True
             )
             async for chunk in stream:
                 if content := chunk.choices[0].delta.content:
+                    full_response += content
                     async with self:
                         ui_state = await self.get_state(UIState)
-                        ui_state.messages[-1]["content"] += content
+                        self._parse_and_update_content(full_response, ui_state)
                     yield
         except Exception as e:
             logging.exception(f"OpenAI Error: {e}")
             async with self:
                 ui_state = await self.get_state(UIState)
-                ui_state.messages[-1]["content"] = (
-                    f"Error: OpenAI API request failed. Please check your quota and API key. Details: {str(e)}"
-                )
+                error_message = f"Error: OpenAI API request failed. Please check your quota and API key. Details: {str(e)}"
+                ui_state.messages[-1]["content"] = [
+                    {"type": "text", "content": error_message, "language": None}
+                ]
         finally:
             async with self:
                 ui_state = await self.get_state(UIState)
@@ -67,25 +102,35 @@ class AIState(rx.State):
                 }
             )
         prompt = history[-1]["content"]
+        full_response = ""
         async with self:
             ui_state = await self.get_state(UIState)
-            ui_state.messages.append({"role": "assistant", "content": ""})
+            ui_state.messages.append(
+                {
+                    "role": "assistant",
+                    "content": [{"type": "text", "content": "", "language": None}],
+                }
+            )
         try:
             chat_session = model_instance.start_chat(history=google_history)
             response = await chat_session.send_message_async(prompt, stream=True)
             async for chunk in response:
                 if text_chunk := chunk.text:
+                    full_response += text_chunk
                     async with self:
                         ui_state = await self.get_state(UIState)
-                        ui_state.messages[-1]["content"] += text_chunk
+                        self._parse_and_update_content(full_response, ui_state)
                     yield
         except Exception as e:
             logging.exception(f"Google Gemini Error: {e}")
             async with self:
                 ui_state = await self.get_state(UIState)
-                ui_state.messages[-1]["content"] = (
+                error_message = (
                     f"Error: Google Gemini API request failed. Details: {str(e)}"
                 )
+                ui_state.messages[-1]["content"] = [
+                    {"type": "text", "content": error_message, "language": None}
+                ]
         finally:
             async with self:
                 ui_state = await self.get_state(UIState)
