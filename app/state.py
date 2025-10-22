@@ -37,12 +37,17 @@ class UIState(rx.State):
         {"name": "GPT-4o", "value": "gpt-4o", "provider": "OpenAI"},
         {"name": "GPT-3.5 Turbo", "value": "gpt-3.5-turbo", "provider": "OpenAI"},
         {
+            "name": "Llama 3.1 8B (Free)",
+            "value": "meta-llama/llama-3.1-8b-instruct:free",
+            "provider": "OpenRouter",
+        },
+        {
             "name": "Gemini 2.5 Pro",
             "value": "models/gemini-2.5-pro",
             "provider": "Google",
         },
     ]
-    selected_model: Model = models[2]
+    selected_model: Model = models[3]
 
     @rx.event
     def toggle_theme(self):

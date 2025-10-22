@@ -34,21 +34,28 @@
 - [x] Support both light and dark themes for code editor
 - [x] Auto-size code blocks based on content length with line numbers
 
+## Phase 5: OpenRouter Integration ✅
+- [x] Add OpenRouter as a new AI provider option
+- [x] Implement OpenRouter streaming using OpenAI client with custom base URL
+- [x] Add Llama 3.1 8B (Free) model from OpenRouter to model list
+- [x] Configure OpenRouter-specific headers (HTTP-Referer)
+- [x] Add error handling for OpenRouter API calls
+
 ---
 
-**Project Status:** ✅ COMPLETE - All 4 phases successfully implemented
+**Project Status:** ✅ COMPLETE - All 5 phases successfully implemented
 
 **Features Delivered:**
 - ✅ Clean, modern Material Design 3 UI with proper spacing and shadows
-- ✅ Multi-provider AI integration (OpenAI GPT-4o, GPT-3.5 Turbo, Google Gemini 2.5 Pro)
+- ✅ Multi-provider AI integration (OpenAI GPT-4o, GPT-3.5 Turbo, Google Gemini 2.5 Pro, **OpenRouter Llama 3.1**)
 - ✅ Real-time streaming responses with thinking indicator animation
 - ✅ Model switcher dropdown with provider labels
 - ✅ Clear chat functionality with trash icon button
-- ✅ **Code block rendering with Monaco editor syntax highlighting**
-- ✅ **Copy-to-clipboard functionality for code snippets**
-- ✅ **Language-specific syntax highlighting (Python, JavaScript, etc.)**
-- ✅ **Dark and light theme support for code blocks**
-- ✅ **Line numbers and proper code formatting**
+- ✅ Code block rendering with Monaco editor syntax highlighting
+- ✅ Copy-to-clipboard functionality for code snippets
+- ✅ Language-specific syntax highlighting (Python, JavaScript, etc.)
+- ✅ Dark and light theme support for code blocks
+- ✅ Line numbers and proper code formatting
 - ✅ Keyboard shortcuts (Enter to send, Esc to close dropdown)
 - ✅ Proper error handling and user feedback
 - ✅ Smooth auto-scroll to latest messages
@@ -58,3 +65,4 @@
 **API Requirements:**
 - OPENAI_API_KEY - For GPT-4o and GPT-3.5 Turbo (requires active quota)
 - GOOGLE_API_KEY - For Gemini 2.5 Pro (tested and working)
+- **OPENROUTER_API_KEY - For OpenRouter models (Llama 3.1 8B Free)**
